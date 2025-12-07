@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from api.health import router as health_router
 from api.upload import router as upload_router
+from api.analyze import router as analyze_router
 
 app = FastAPI(title="MYB - Mind Your Business API")
 
@@ -8,6 +9,8 @@ app = FastAPI(title="MYB - Mind Your Business API")
 app.include_router(health_router)
 
 app.include_router(upload_router)
+
+app.include_router(analyze_router)
 
 #prueba de mensaje saludo
 @app.get("/")
