@@ -2,6 +2,14 @@
 
 **MYB** es una aplicación Full Stack diseñada para empoderar a los trabajadores, ayudándoles a entender sus nóminas mediante Inteligencia Artificial, garantizando siempre la privacidad de sus datos.
 
+## 🛠 Backend Stack
+![Python](https://img.shields.io/badge/Python-%233776AB.svg?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991.svg?style=for-the-badge&logo=openai&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
+
+
 ## Características Principales
 
 * **Lectura Inteligente (OCR):** Extracción de texto desde PDFs y fotos usando `EasyOCR` y `PyMuPDF`.
