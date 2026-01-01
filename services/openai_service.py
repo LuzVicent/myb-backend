@@ -1,20 +1,24 @@
+import logging # <--- IMPORTAR LOGGING
 import openai
 import os
 import json
 import base64 # <--- Necesario para convertir la imagen en texto transportable
 from dotenv import load_dotenv 
 
+# Configurar el logger para este archivo
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
-    print("ADVERTENCIA: No se encontró OPENAI_API_KEY en .env")
+    logger.warning("ADVERTENCIA: No se encontró OPENAI_API_KEY en .env")
 
 client = openai.OpenAI(api_key=api_key)
 
 # --- FUNCIÓN 1: Para Texto (PDFs) ---
 def analyze_payroll(text_anonymized):
-    print("---  Conectando con OpenAI (Modo Texto)... ---")
+    logger.info("---  Conectando con OpenAI (Modo Texto)... ---")
     
     system_prompt = """
     Eres un experto abogado laboralista y asesor financiero.
@@ -41,12 +45,12 @@ def analyze_payroll(text_anonymized):
         )
         return json.loads(response.choices[0].message.content)
     except Exception as e:
-        print(f"Error OpenAI: {e}")
+        logger.error(f"Error OpenAI (Texto): {e}", exc_info=True)
         return _error_response()
 
 # --- FUNCIÓN 2: Para Imágenes (Vision) --
 def analyze_payroll_image(image_bytes):
-    print("--- Conectando con OpenAI (Modo Visión)... ---")
+    logger.info("--- Conectando con OpenAI (Modo Visión)... ---")
     
     # 1. Convertimos la imagen a Base64 (el formato que pide OpenAI)
     base64_image = base64.b64encode(image_bytes).decode('utf-8')
@@ -106,7 +110,7 @@ def analyze_payroll_image(image_bytes):
         return json.loads(response.choices[0].message.content)
 
     except Exception as e:
-        print(f"Error OpenAI Vision: {e}")
+        logger.error(f"Error OpenAI Vision: {e}", exc_info=True)
         return _error_response()
 
 # Helper para devolver error limpio

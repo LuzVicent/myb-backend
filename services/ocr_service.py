@@ -1,11 +1,15 @@
+import logging # <--- IMPORTAR LOGGING
 import fitz #para abrir pdfs -> pymupdf
 import easyocr #ia para leer img
 import numpy as np
 import io
 from PIL import Image, ImageOps, ImageEnhance
 
+# Configurar el logger para este archivo
+logger = logging.getLogger(__name__)
+
 #inicializar ocr solo una vez al principio. Si se hace dentro de la función, el servidor se congelaría cada vez que subo un doc
-print("cargarndo ocr...")
+logger.info("Cargando modelo EasyOCR (esto puede tardar un poco)...")
 reader = easyocr.Reader(['es'], gpu=False) #buscan en español
 
 def extract_text(file_content: bytes, filename: str) -> str:
@@ -15,19 +19,19 @@ def extract_text(file_content: bytes, filename: str) -> str:
     try:
         # --- OPCIÓN A: PDF ---
         if filename.endswith(".pdf"):
-            print("Procesando PDF...")
+            logger.info(f"Procesando PDF: {filename}...")
             doc = fitz.open(stream=file_content, filetype="pdf")
             for page in doc:
                 text_result += page.get_text()
                     
-       # --- OPCIÓN B: IMAGEN (JPG/PNG) ---
+        # --- OPCIÓN B: IMAGEN (JPG/PNG) ---
         else:
-            print("Procesando Imagen (Modo Alta Calidad)...")
+            logger.info(f"Procesando Imagen {filename} (Modo Alta Calidad)...")
             
             try:
                 image = Image.open(io.BytesIO(file_content))
             except Exception as e:
-                print(f"Error Pillow: {e}")
+                logger.error(f"Error Pillow abriendo imagen: {e}")
                 return ""
 
             # 1. ESCALA DE GRISES (Quitamos colores que confunden)
@@ -41,10 +45,10 @@ def extract_text(file_content: bytes, filename: str) -> str:
             # Una nómina A4 necesita píxeles. 1024 era muy poco.
             # Subimos a 2500. Si la imagen es menor, NO la tocamos.
             if image.width > 2500 or image.height > 2500:
-                print(" Imagen gigante: Redimensionando a 2500px para no explotar la RAM")
+                logger.info(" Imagen gigante: Redimensionando a 2500px para no explotar la RAM")
                 image.thumbnail((2500, 2500))
             else:
-                print(f" Manteniendo resolución original: {image.size}")
+                logger.info(f" Manteniendo resolución original: {image.size}")
             
             # 4. Leer con EasyOCR
             img_np = np.array(image)
@@ -58,5 +62,6 @@ def extract_text(file_content: bytes, filename: str) -> str:
         return text_result
 
     except Exception as e:
-        print(f"ERROR CRÍTICO EN OCR: {e}")
+        # exc_info=True añade toda la traza del error al log (muy útil para bugs difíciles)
+        logger.error(f"ERROR CRÍTICO EN OCR: {e}", exc_info=True)
         return ""

@@ -1,9 +1,17 @@
+import logging # <--- IMPORTAR LOGGING
 import spacy
 import re # Liberia regex
 
+# Configurar el logger para este archivo
+logger = logging.getLogger(__name__)
+
 # 1. Cargamos el cerebro en español de spaCy
-print("--- Cargando modelo de anonimización (spaCy)... ---")
-nlp = spacy.load("es_core_news_sm")
+logger.info("--- Cargando modelo de anonimización (spaCy)... ---")
+try:
+    nlp = spacy.load("es_core_news_sm")
+except Exception as e:
+    logger.error(f"Error cargando spaCy (es_core_news_sm): {e}. Asegúrate de haber ejecutado 'python -m spacy download es_core_news_sm'")
+    raise e
 
 def anonymize_text(text):
     """
