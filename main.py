@@ -1,13 +1,26 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 #permisos para conexion
 from fastapi.middleware.cors import CORSMiddleware
+
+#orm
+from orm.database import init_db
 
 #routers
 from api.health import router as health_router
 from api.upload import router as upload_router
 from api.analyze import router as analyze_router
 
-app = FastAPI(title="MYB - Mind Your Business API")
+#Ciclo de vida de la app
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    #Al iniciar la app, crea las tablas si no existen
+    await init_db() 
+    yield
+    #Aquí opcinalmente se puede poner código para cuando la app se cierra
+
+
+app = FastAPI(title="MYB - Mind Your Business API", lifespan=lifespan)
 
 #CORS
 app.add_middleware(

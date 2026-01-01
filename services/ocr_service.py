@@ -15,19 +15,19 @@ def extract_text(file_content: bytes, filename: str) -> str:
     try:
         # --- OPCIÓN A: PDF ---
         if filename.endswith(".pdf"):
-            print("📄 Procesando PDF...")
+            print("Procesando PDF...")
             doc = fitz.open(stream=file_content, filetype="pdf")
             for page in doc:
                 text_result += page.get_text()
                     
        # --- OPCIÓN B: IMAGEN (JPG/PNG) ---
         else:
-            print("📸 Procesando Imagen (Modo Alta Calidad)...")
+            print("Procesando Imagen (Modo Alta Calidad)...")
             
             try:
                 image = Image.open(io.BytesIO(file_content))
             except Exception as e:
-                print(f"❌ Error Pillow: {e}")
+                print(f"Error Pillow: {e}")
                 return ""
 
             # 1. ESCALA DE GRISES (Quitamos colores que confunden)
@@ -41,10 +41,10 @@ def extract_text(file_content: bytes, filename: str) -> str:
             # Una nómina A4 necesita píxeles. 1024 era muy poco.
             # Subimos a 2500. Si la imagen es menor, NO la tocamos.
             if image.width > 2500 or image.height > 2500:
-                print("   ⚠️ Imagen gigante: Redimensionando a 2500px para no explotar la RAM")
+                print(" Imagen gigante: Redimensionando a 2500px para no explotar la RAM")
                 image.thumbnail((2500, 2500))
             else:
-                print(f"   ✅ Manteniendo resolución original: {image.size}")
+                print(f" Manteniendo resolución original: {image.size}")
             
             # 4. Leer con EasyOCR
             img_np = np.array(image)
@@ -58,5 +58,5 @@ def extract_text(file_content: bytes, filename: str) -> str:
         return text_result
 
     except Exception as e:
-        print(f"❌ ERROR CRÍTICO EN OCR: {e}")
+        print(f"ERROR CRÍTICO EN OCR: {e}")
         return ""

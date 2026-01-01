@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  # Servicio de Base de Datos
+  mongodb:
+    image: mongo:latest  # Descarga la última versión oficial
+    container_name: myb_mongodb_container
+    restart: always      # Si se cae, se levanta solo
+    ports:
+      - "27017:27017"    # PUENTE: Conecta el puerto 27017 de tu PC con el 27017 del contenedor
+    volumes:
+      - mongo_data:/data/db # PERSISTENCIA: Guarda los datos en un volumen seguro
+
+# Definimos el volumen para que los datos sobrevivan aunque borres el contenedor
+volumes:
+  mongo_data:
