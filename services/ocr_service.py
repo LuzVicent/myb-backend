@@ -1,4 +1,4 @@
-import logging # <--- IMPORTAR LOGGING
+import logging 
 import fitz #para abrir pdfs -> pymupdf
 import easyocr #ia para leer img
 import numpy as np
