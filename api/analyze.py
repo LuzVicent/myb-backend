@@ -1,4 +1,4 @@
-import logging # <--- IMPORTAR LOGGING
+import logging 
 from fastapi import APIRouter, UploadFile, File, HTTPException
 import shutil
 import os
@@ -43,19 +43,14 @@ async def analyze_payroll_endpoint(file: UploadFile = File(...),):
         with open(temp_path, "rb") as f:
             file_content = f.read()
 
-        # --- BIFURCACIÓN DEL CAMINO ---
-        
-        # CAMINO A: Es una IMAGEN (JPG/PNG) -> Usamos GPT-4 Vision
+        # Detectar formato y elegir estrategia de análisis
         if filename.endswith(('.jpg', '.jpeg', '.png')):
-            # LOG: Información operativa normal
             logger.info(f"Imagen detectada ({filename}). Usando GPT-4 Vision...")
-            # Enviamos la imagen DIRECTA a OpenAI (sin pasar por EasyOCR local)
             result_json = analyze_payroll_image(file_content)
             
 
-        # CAMINO B: Es un PDF -> Usamos el método clásico 
+        # PDF
         elif filename.endswith('.pdf'):
-            # LOG: Información operativa normal
             logger.info(f"PDF detectado ({filename}). Usando OCR Local...")
             
             # 1. OCR Local
